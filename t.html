@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Resizable Layout</title>
+	<style>
+		.container {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.sub-container {
+			display: flex;
+			flex-direction: row;
+		}
+
+		.component {
+
+			border: 1px solid #ccc;
+			overflow: auto;
+		}
+
+		.resizable {
+			resize: both;
+			overflow: auto;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="container">
+		<div class="sub-container columns">
+			<div class="component resizable">
+				<h2>Component 1</h2>
+				<p>This is the content of component 1.</p>
+				<img src="/public/free-images.jpg" alt="Image 1">
+			</div>
+			<div class="component resizable">
+				<h2>Component 2</h2>
+				<p>This is the content of component 2.</p>
+				<img src="https://www.freeimages.com/photo/three-bees-on-sunflower-1337029" alt="Image 2">
+			</div>
+		</div>
+		<div class="component resizable">
+			<h2>Component 3</h2>
+			<p>This is the content of component 3.</p>
+			<img src="https://www.freeimages.com/photo/three-bees-on-sunflower-1337029" alt="Image 3">
+		</div>
+	</div>
+
+	<script>
+		const components = document.querySelectorAll('.resizable');
+
+		components.forEach(component => {
+			component.addEventListener('mousedown', function (event) {
+				let prevX = event.clientX;
+				let prevY = event.clientY;
+				let prevWidth = component.offsetWidth;
+				let prevHeight = component.offsetHeight;
+
+				function resize(event) {
+					const deltaX = event.clientX - prevX;
+					const deltaY = event.clientY - prevY;
+					const newWidth = prevWidth + deltaX;
+					const newHeight = prevHeight + deltaY;
+
+					component.style.width = newWidth + 'px';
+					component.style.height = newHeight + 'px';
+
+					// Calculate available width for the neighboring components
+					const containerWidth = component.parentNode.offsetWidth;
+					const totalWidth = Array.from(component.parentNode.children).reduce((acc, child) => acc + child.offsetWidth, 0);
+					const remainingWidth = containerWidth - totalWidth + newWidth;
+
+					// Update width of neighboring components
+					const neighbors = Array.from(component.parentNode.children).filter(child => child !== component);
+					const numNeighbors = neighbors.length;
+					const neighborWidth = remainingWidth / numNeighbors;
+					neighbors.forEach(neighbor => {
+						neighbor.style.width = neighborWidth + 'px';
+					});
+
+					prevX = event.clientX;
+					prevY = event.clientY;
+					prevWidth = newWidth;
+					prevHeight = newHeight;
+				}
+
+				function stopResize() {
+					window.removeEventListener('mousemove', resize);
+				}
+
+				window.addEventListener('mousemove', resize);
+				window.addEventListener('mouseup', stopResize);
+			});
+		});
+	</script>
+
+</body>
+
+</html>

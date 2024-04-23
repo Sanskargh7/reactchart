@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  height: 300px;
+  /* flex-wrap: wrap; */
+  flex-direction: column;
+}
+
+.component {
+  /* width: 30%; */
+  border: 1px solid #ccc;
+  overflow: auto;
+}
+
+.resizable {
+  resize: both;
+  overflow: auto;
+}
+
+.columns {
+  flex-direction: row;
+}
